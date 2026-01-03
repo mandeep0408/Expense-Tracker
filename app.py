@@ -813,7 +813,16 @@ def savings_goal_detail(goal_id):
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
-    host = os.environ.get('HOST', '127.0.0.1' if debug_mode else '0.0.0.0')
+    
+    # For production (Render, Railway, etc.), always bind to 0.0.0.0
+    # If PORT is set by the platform, it's production
+    if os.environ.get('PORT'):
+        host = '0.0.0.0'
+        debug_mode = False  # Disable debug in production
+    else:
+        # Local development
+        host = os.environ.get('HOST', '127.0.0.1')
+    
     try:
         app.run(host=host, port=port, debug=debug_mode)
     except OSError as e:
