@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Expense Tracker</h1>
+            <nav>
+                <a href="/dashboard" class="active">Dashboard</a>
+                <a href="/expense-history">History</a>
+                <a href="/budget">Budget</a>
+                <a href="/savings">Savings</a>
+                <div class="user-menu">
+                    <span class="user-name" id="user-name">User</span>
+                    <a href="/signout" class="btn-signout">Sign Out</a>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Summary Cards -->
+        <section class="summary-cards">
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Total Expenses</h3>
+                    <p class="card-value" id="month-total">₹0</p>
+                    <span class="card-label">This Month</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Today's Spending</h3>
+                    <p class="card-value" id="today-total">₹0</p>
+                    <span class="card-label">Today</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Avg Daily Spend</h3>
+                    <p class="card-value" id="avg-daily">₹0</p>
+                    <span class="card-label">This Month</span>
+                </div>
+            </div>
+            <div class="card" id="remaining-budget-card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Remaining Budget</h3>
+                    <p class="card-value" id="remaining-budget">₹0</p>
+                    <span class="card-label">This Month</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Expense Button -->
+        <div class="add-expense-btn-container">
+            <button class="btn-primary" onclick="openExpenseModal()">+ Add Expense</button>
+        </div>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="chart-container">
+                <h2>Category Distribution</h2>
+                <canvas id="pieChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Daily Expense Trend</h2>
+                <canvas id="lineChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Category vs Amount</h2>
+                <canvas id="barChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Payment Mode Split</h2>
+                <canvas id="donutChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Monthly Comparison</h2>
+                <canvas id="monthlyChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Budget Usage</h2>
+                <div class="progress-container">
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar" id="budget-progress">
+                            <span id="budget-percent">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2>Top 5 Highest Expenses</h2>
+                <canvas id="topExpensesChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Cumulative Spending</h2>
+                <canvas id="cumulativeChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <!-- Expense Modal -->
+    <div id="expenseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeExpenseModal()">&times;</span>
+            <h2>Add Expense</h2>
+            <form id="expenseForm">
+                <div class="form-group">
+                    <label for="amount">Amount *</label>
+                    <input type="number" id="amount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Food & Dining">Food & Dining</option>
+                        <option value="Transportation">Transportation</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Bills & Utilities">Bills & Utilities</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Education">Education</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Personal Care">Personal Care</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date *</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="payment_mode">Payment Mode *</label>
+                    <select id="payment_mode" required>
+                        <option value="">Select Payment Mode</option>
+                        <option value="Cash">Cash</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Card">Card</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes (Optional)</label>
+                    <textarea id="notes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Save Expense</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script>
+        // Display user name
+        document.addEventListener('DOMContentLoaded', function() {
+            const userName = '{{ session.get("user_name", "User") }}';
+            const userElement = document.getElementById('user-name');
+            if (userElement) {
+                userElement.textContent = userName;
+            }
+        });
+    </script>
+</body>
+</html>
+

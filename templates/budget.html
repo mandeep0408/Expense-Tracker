@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker - Budget</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Expense Tracker</h1>
+            <nav>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/expense-history">History</a>
+                <a href="/budget" class="active">Budget</a>
+                <a href="/savings">Savings</a>
+                <div class="user-menu">
+                    <span class="user-name" id="user-name">User</span>
+                    <a href="/signout" class="btn-signout">Sign Out</a>
+                </div>
+            </nav>
+        </header>
+
+        <section class="page-header">
+            <h2>Budget Management</h2>
+        </section>
+
+        <!-- Monthly Budget -->
+        <section class="budget-section">
+            <h3>Monthly Budget</h3>
+            <div class="budget-form-container">
+                <form id="monthlyBudgetForm">
+                    <div class="form-group">
+                        <label for="monthly-budget-amount">Monthly Budget Amount *</label>
+                        <input type="number" id="monthly-budget-amount" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="budget-month">Month</label>
+                        <input type="month" id="budget-month" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Set Monthly Budget</button>
+                </form>
+            </div>
+            <div id="monthly-budget-status" class="budget-status"></div>
+        </section>
+
+        <!-- Category-wise Budget -->
+        <section class="budget-section">
+            <h3>Category-wise Budget (Optional)</h3>
+            <div class="budget-form-container">
+                <form id="categoryBudgetForm">
+                    <div class="form-group">
+                        <label for="category-budget-category">Category *</label>
+                        <select id="category-budget-category" required>
+                            <option value="">Select Category</option>
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Bills & Utilities">Bills & Utilities</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Education">Education</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Personal Care">Personal Care</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="category-budget-amount">Budget Amount *</label>
+                        <input type="number" id="category-budget-amount" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category-budget-month">Month</label>
+                        <input type="month" id="category-budget-month" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Set Category Budget</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Current Budgets Display -->
+        <section class="budget-section">
+            <h3>Current Budgets</h3>
+            <div id="budgets-list" class="budgets-list">
+                <p class="loading">Loading budgets...</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/budget.js') }}"></script>
+    <script>
+        // Display user name
+        document.addEventListener('DOMContentLoaded', function() {
+            const userName = '{{ session.get("user_name", "User") }}';
+            const userElement = document.getElementById('user-name');
+            if (userElement) {
+                userElement.textContent = userName;
+            }
+        });
+    </script>
+</body>
+</html>
+

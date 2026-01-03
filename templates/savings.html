@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker - Savings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Expense Tracker</h1>
+            <nav>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/expense-history">History</a>
+                <a href="/budget">Budget</a>
+                <a href="/savings" class="active">Savings</a>
+                <div class="user-menu">
+                    <span class="user-name" id="user-name">User</span>
+                    <a href="/signout" class="btn-signout">Sign Out</a>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Summary Cards -->
+        <section class="summary-cards">
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Total Savings</h3>
+                    <p class="card-value" id="total-savings">₹0</p>
+                    <span class="card-label">All-time</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Savings This Month</h3>
+                    <p class="card-value" id="month-savings">₹0</p>
+                    <span class="card-label">This Month</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="6"/>
+                        <circle cx="12" cy="12" r="2"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Active Savings Goal</h3>
+                    <p class="card-value" id="active-goal-name">None</p>
+                    <span class="card-label">Current Goal</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Remaining to Goal</h3>
+                    <p class="card-value" id="remaining-to-goal">₹0</p>
+                    <span class="card-label">To Reach Goal</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <div class="add-expense-btn-container">
+            <button class="btn-primary" onclick="openSavingsModal()">+ Add Savings</button>
+            <button class="btn-secondary" onclick="openGoalModal()">+ Create Goal</button>
+            <button class="btn-secondary" onclick="showHistory()">View History</button>
+        </div>
+
+        <!-- Savings Goals Section -->
+        <section class="budget-section" id="goals-section">
+            <h3>Savings Goals</h3>
+            <div id="goals-list" class="budgets-list">
+                <p class="loading">Loading goals...</p>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="chart-container">
+                <h2>Savings Growth Over Time</h2>
+                <canvas id="growthChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Source-wise Distribution</h2>
+                <canvas id="sourceChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Monthly Savings Comparison</h2>
+                <canvas id="monthlySavingsChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Goal Progress</h2>
+                <div id="goal-progress-container"></div>
+            </div>
+        </section>
+
+        <!-- Savings History Section (Hidden by default) -->
+        <section class="expense-list" id="history-section" style="display: none;">
+            <div class="page-header">
+                <h2>Savings History</h2>
+                <button class="btn-secondary" onclick="hideHistory()">Hide History</button>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="savings-filter-date-from">From Date:</label>
+                    <input type="date" id="savings-filter-date-from">
+                </div>
+                <div class="filter-group">
+                    <label for="savings-filter-date-to">To Date:</label>
+                    <input type="date" id="savings-filter-date-to">
+                </div>
+                <div class="filter-group">
+                    <label for="savings-filter-source">Source:</label>
+                    <select id="savings-filter-source">
+                        <option value="">All Sources</option>
+                        <option value="Salary">Salary</option>
+                        <option value="Freelance">Freelance</option>
+                        <option value="Investment">Investment</option>
+                        <option value="Gift">Gift</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button class="btn-secondary" onclick="applySavingsFilters()">Apply Filters</button>
+                <button class="btn-secondary" onclick="clearSavingsFilters()">Clear</button>
+            </div>
+
+            <!-- Savings List -->
+            <div id="savings-list-container">
+                <p class="loading">Loading savings...</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Add Savings Modal -->
+    <div id="savingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSavingsModal()">&times;</span>
+            <h2 id="savings-modal-title">Add Savings</h2>
+            <form id="savingsForm">
+                <input type="hidden" id="saving-id">
+                <div class="form-group">
+                    <label for="savings-amount">Amount *</label>
+                    <input type="number" id="savings-amount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="savings-source">Source *</label>
+                    <select id="savings-source" required>
+                        <option value="">Select Source</option>
+                        <option value="Salary">Salary</option>
+                        <option value="Freelance">Freelance</option>
+                        <option value="Investment">Investment</option>
+                        <option value="Gift">Gift</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="savings-date">Date *</label>
+                    <input type="date" id="savings-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="savings-notes">Notes (Optional)</label>
+                    <textarea id="savings-notes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Save Savings</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Goal Modal -->
+    <div id="goalModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeGoalModal()">&times;</span>
+            <h2>Create Savings Goal</h2>
+            <form id="goalForm">
+                <div class="form-group">
+                    <label for="goal-name">Goal Name *</label>
+                    <input type="text" id="goal-name" required placeholder="e.g., Emergency Fund, Vacation">
+                </div>
+                <div class="form-group">
+                    <label for="goal-target-amount">Target Amount *</label>
+                    <input type="number" id="goal-target-amount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="goal-target-date">Target Date (Optional)</label>
+                    <input type="date" id="goal-target-date">
+                </div>
+                <button type="submit" class="btn-primary">Create Goal</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/savings.js') }}"></script>
+    <script>
+        // Display user name
+        document.addEventListener('DOMContentLoaded', function() {
+            const userName = '{{ session.get("user_name", "User") }}';
+            const userElement = document.getElementById('user-name');
+            if (userElement) {
+                userElement.textContent = userName;
+            }
+        });
+    </script>
+</body>
+</html>
+

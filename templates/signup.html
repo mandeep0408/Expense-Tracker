@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-wrapper">
+            <div class="auth-illustration">
+                <div class="auth-icon-circle signup">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="19" y1="8" x2="19" y2="14"/>
+                        <line x1="22" y1="11" x2="16" y2="11"/>
+                    </svg>
+                </div>
+                <h1>Expense Tracker</h1>
+                <p class="auth-tagline">Start your financial journey today</p>
+            </div>
+            
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Create Account</h2>
+                    <p class="auth-subtitle">Sign up to start tracking your expenses and savings</p>
+                </div>
+                
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            <input type="text" id="name" required autocomplete="name" placeholder="John Doe">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <input type="email" id="email" required autocomplete="email" placeholder="you@example.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <input type="password" id="password" required autocomplete="new-password" minlength="6" placeholder="At least 6 characters">
+                        </div>
+                        <small class="form-hint">Minimum 6 characters required</small>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full btn-auth">
+                        <span>Create Account</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>Already have an account?</span>
+                </div>
+                
+                <p class="auth-footer">
+                    Sign in to your existing account <a href="/signin">here</a>
+                </p>
+                
+                <div id="auth-message" class="auth-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('auth-message');
+            
+            if (password.length < 6) {
+                messageDiv.textContent = 'Password must be at least 6 characters';
+                messageDiv.className = 'auth-message error';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    messageDiv.textContent = 'Account created! Redirecting...';
+                    messageDiv.className = 'auth-message success';
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                } else {
+                    messageDiv.textContent = result.message;
+                    messageDiv.className = 'auth-message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error creating account. Please try again.';
+                messageDiv.className = 'auth-message error';
+            }
+        });
+    </script>
+</body>
+</html>
+

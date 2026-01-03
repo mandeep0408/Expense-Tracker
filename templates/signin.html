@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-wrapper">
+            <div class="auth-illustration">
+                <div class="auth-icon-circle">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+                <h1>Expense Tracker</h1>
+                <p class="auth-tagline">Take control of your finances</p>
+            </div>
+            
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Welcome Back</h2>
+                    <p class="auth-subtitle">Sign in to continue to your account</p>
+                </div>
+                
+                <form id="signinForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <input type="email" id="email" required autocomplete="email" placeholder="you@example.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <input type="password" id="password" required autocomplete="current-password" placeholder="Enter your password">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full btn-auth">
+                        <span>Sign In</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </button>
+                </form>
+                
+                <div class="auth-divider">
+                    <span>New to Expense Tracker?</span>
+                </div>
+                
+                <p class="auth-footer">
+                    Don't have an account? <a href="/signup">Create one now</a>
+                </p>
+                
+                <div id="auth-message" class="auth-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signinForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('auth-message');
+            
+            try {
+                const response = await fetch('/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    messageDiv.textContent = 'Signing in...';
+                    messageDiv.className = 'auth-message success';
+                    window.location.href = '/dashboard';
+                } else {
+                    messageDiv.textContent = result.message;
+                    messageDiv.className = 'auth-message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error signing in. Please try again.';
+                messageDiv.className = 'auth-message error';
+            }
+        });
+    </script>
+</body>
+</html>
+
