@@ -812,5 +812,17 @@ def savings_goal_detail(goal_id):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    host = os.environ.get('HOST', '127.0.0.1' if debug_mode else '0.0.0.0')
+    try:
+        app.run(host=host, port=port, debug=debug_mode)
+    except OSError as e:
+        if 'Address already in use' in str(e):
+            print(f"\nError: Port {port} is already in use.")
+            print(f"Please either:")
+            print(f"  1. Stop the other application using port {port}")
+            print(f"  2. Use a different port: set PORT=5001 python app.py")
+        else:
+            print(f"\nError starting server: {e}")
+        raise
 
