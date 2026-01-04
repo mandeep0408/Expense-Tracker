@@ -589,11 +589,11 @@ def savings():
     conn.close()
     
     result = [{
-        'id': saving[0],
-        'amount': saving[2],
-        'source': saving[3],
-        'date': saving[4],
-        'notes': saving[5]
+        'id': saving['id'],
+        'amount': saving['amount'],
+        'source': saving['source'],
+        'date': saving['date'],
+        'notes': saving['notes']
     } for saving in savings_list]
     
     return jsonify(result)
@@ -809,6 +809,78 @@ def savings_goal_detail(goal_id):
     except Exception as e:
         conn.close()
         return jsonify({'success': False, 'message': str(e)}), 400
+
+@app.route('/profile')
+@login_required
+def profile_page():
+    """Profile page"""
+    return render_template('profile.html')
+
+@app.route('/api/profile', methods=['GET', 'PUT'])
+@login_required
+def profile():
+    """Handle profile operations"""
+    user_id = get_current_user_id()
+    conn = get_db_connection()
+    
+    if request.method == 'PUT':
+        data = request.get_json()
+        try:
+            about = data.get('about', '')
+            vision_year = data.get('vision_year', '')
+            vision_month = data.get('vision_month', '')
+            company = data.get('company', '')
+            
+            # Check if profile exists
+            existing = conn.execute(
+                'SELECT id FROM user_profile WHERE user_id = ?', (user_id,)
+            ).fetchone()
+            
+            if existing:
+                # Update existing profile
+                conn.execute(
+                    '''UPDATE user_profile SET about = ?, vision_year = ?, vision_month = ?, 
+                       company = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?''',
+                    (about, vision_year, vision_month, company, user_id)
+                )
+            else:
+                # Create new profile
+                conn.execute(
+                    '''INSERT INTO user_profile (user_id, about, vision_year, vision_month, company) 
+                       VALUES (?, ?, ?, ?, ?)''',
+                    (user_id, about, vision_year, vision_month, company)
+                )
+            
+            conn.commit()
+            conn.close()
+            return jsonify({'success': True, 'message': 'Profile updated successfully'})
+        except Exception as e:
+            conn.close()
+            return jsonify({'success': False, 'message': str(e)}), 400
+    
+    # GET request
+    profile_data = conn.execute(
+        'SELECT about, vision_year, vision_month, company FROM user_profile WHERE user_id = ?',
+        (user_id,)
+    ).fetchone()
+    conn.close()
+    
+    if profile_data:
+        result = {
+            'about': profile_data['about'] or '',
+            'vision_year': profile_data['vision_year'] or '',
+            'vision_month': profile_data['vision_month'] or '',
+            'company': profile_data['company'] or ''
+        }
+    else:
+        result = {
+            'about': '',
+            'vision_year': '',
+            'vision_month': '',
+            'company': ''
+        }
+    
+    return jsonify(result)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

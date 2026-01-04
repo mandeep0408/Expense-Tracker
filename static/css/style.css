@@ -92,6 +92,86 @@ header h1 {
     font-weight: 600;
     color: var(--text-primary);
     letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.logo:hover {
+    transform: translateY(-2px);
+}
+
+.logo:hover .logo-icon {
+    transform: rotate(5deg) scale(1.05);
+    box-shadow: 0 4px 12px rgba(58, 91, 160, 0.3);
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-teal) 100%);
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(58, 91, 160, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
+    opacity: 0;
+}
+
+.logo:hover .logo-icon::before {
+    animation: shine 0.6s ease;
+}
+
+@keyframes shine {
+    0% {
+        left: -50%;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        left: 150%;
+        opacity: 0;
+    }
+}
+
+.logo-icon svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.logo:hover .logo-icon svg {
+    transform: scale(1.1);
 }
 
 nav {
@@ -732,6 +812,174 @@ nav a.active {
     border-bottom: none;
 }
 
+/* Profile Page Styles */
+.profile-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-teal) 100%);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.profile-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+}
+
+.profile-avatar svg {
+    width: 40px;
+    height: 40px;
+    stroke: white;
+}
+
+.profile-header-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.profile-header-content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: white;
+    letter-spacing: -0.02em;
+}
+
+.profile-subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+}
+
+.profile-content {
+    padding: var(--spacing-lg);
+}
+
+.profile-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.profile-form-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.profile-form-section:hover {
+    box-shadow: var(--shadow-md);
+    border-color: rgba(58, 91, 160, 0.2);
+    transform: translateY(-2px);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--border-subtle);
+}
+
+.section-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, rgba(58, 91, 160, 0.1) 0%, rgba(47, 143, 157, 0.1) 100%);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.section-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--primary-blue);
+}
+
+.section-header h3 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.profile-form-section .form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.profile-form-section .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.profile-form-section label {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.9375rem;
+}
+
+.profile-form-actions {
+    display: flex;
+    justify-content: center;
+    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.profile-form-actions .btn-primary {
+    padding: 16px 32px;
+    font-size: 1.0625rem;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
 .budget-section h3 {
     font-size: 1.375rem;
     margin-bottom: var(--spacing-md);
@@ -1128,6 +1376,16 @@ nav a.active {
     header h1 {
         font-size: 1.5rem;
     }
+    
+    .logo-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .logo-icon svg {
+        width: 20px;
+        height: 20px;
+    }
 
     nav {
         width: 100%;
@@ -1323,6 +1581,16 @@ nav a.active {
     header h1 {
         font-size: 1.25rem;
     }
+    
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .logo-icon svg {
+        width: 18px;
+        height: 18px;
+    }
 
     .summary-cards {
         padding: var(--spacing-sm);
@@ -1416,5 +1684,45 @@ nav a.active {
 
     .auth-header h2 {
         font-size: 1.5rem;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .profile-header-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .profile-avatar {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .profile-avatar svg {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .profile-form-section {
+        padding: var(--spacing-md);
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+    
+    .section-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .section-icon svg {
+        width: 18px;
+        height: 18px;
     }
 }
