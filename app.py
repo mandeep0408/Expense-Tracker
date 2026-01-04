@@ -95,10 +95,10 @@ def signin():
         ).fetchone()
         conn.close()
         
-        if user and check_password_hash(user[2], password):
-            session['user_id'] = user[0]
-            session['user_name'] = user[3]
-            session['user_email'] = user[1]
+        if user and check_password_hash(user['password'], password):
+            session['user_id'] = user['id']
+            session['user_name'] = user['name']
+            session['user_email'] = user['email']
             return jsonify({'success': True, 'message': 'Signed in successfully'}), 200
         else:
             return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
@@ -173,12 +173,12 @@ def expenses():
     conn.close()
     
     result = [{
-        'id': exp[0],
-        'amount': exp[2],
-        'category': exp[3],
-        'date': exp[4],
-        'payment_mode': exp[5],
-        'notes': exp[6]
+        'id': exp['id'],
+        'amount': exp['amount'],
+        'category': exp['category'],
+        'date': exp['date'],
+        'payment_mode': exp['payment_mode'],
+        'notes': exp['notes']
     } for exp in expenses]
     
     return jsonify(result)
@@ -243,7 +243,7 @@ def dashboard_summary():
         'SELECT amount FROM budget WHERE user_id = ? AND type = ? AND month = ?',
         (user_id, 'monthly', datetime.now().strftime('%Y-%m'))
     ).fetchone()
-    monthly_budget = budget_row[0] if budget_row else 0
+    monthly_budget = budget_row['amount'] if budget_row else 0
     remaining_budget = monthly_budget - month_total
     
     conn.close()
@@ -277,8 +277,8 @@ def category_distribution():
     
     conn.close()
     
-    categories = [row[0] for row in results]
-    amounts = [round(row[1], 2) for row in results]
+    categories = [row['category'] for row in results]
+    amounts = [round(row['total'], 2) for row in results]
     
     return jsonify({
         'categories': categories,
@@ -305,8 +305,8 @@ def daily_trend():
     
     conn.close()
     
-    dates = [row[0] for row in results]
-    amounts = [round(row[1], 2) for row in results]
+    dates = [row['date'] for row in results]
+    amounts = [round(row['total'], 2) for row in results]
     
     return jsonify({
         'dates': dates,
@@ -333,8 +333,8 @@ def category_bar():
     
     conn.close()
     
-    categories = [row[0] for row in results]
-    amounts = [round(row[1], 2) for row in results]
+    categories = [row['category'] for row in results]
+    amounts = [round(row['total'], 2) for row in results]
     
     return jsonify({
         'categories': categories,
@@ -361,8 +361,8 @@ def payment_mode():
     
     conn.close()
     
-    modes = [row[0] for row in results]
-    amounts = [round(row[1], 2) for row in results]
+    modes = [row['payment_mode'] for row in results]
+    amounts = [round(row['total'], 2) for row in results]
     
     return jsonify({
         'modes': modes,
@@ -414,8 +414,8 @@ def top_expenses():
     
     conn.close()
     
-    labels = [f"{row[0]} ({row[2]})" for row in results]
-    amounts = [round(row[1], 2) for row in results]
+    labels = [f"{row['category']} ({row['date']})" for row in results]
+    amounts = [round(row['amount'], 2) for row in results]
     
     return jsonify({
         'labels': labels,
@@ -442,8 +442,8 @@ def cumulative_spending():
     
     conn.close()
     
-    dates = [row[0] for row in results]
-    daily_amounts = [row[1] for row in results]
+    dates = [row['date'] for row in results]
+    daily_amounts = [row['daily_total'] for row in results]
     
     cumulative = []
     running_total = 0
@@ -514,11 +514,11 @@ def budget():
     conn.close()
     
     result = [{
-        'id': row[0],
-        'amount': row[2],
-        'type': row[3],
-        'month': row[4],
-        'category': row[5]
+        'id': row['id'],
+        'amount': row['amount'],
+        'type': row['type'],
+        'month': row['month'],
+        'category': row['category']
     } for row in budgets]
     
     return jsonify(result)
@@ -653,8 +653,8 @@ def savings_summary():
         (user_id,)
     ).fetchone()
     
-    active_goal_name = goal_row[0] if goal_row else None
-    target_amount = goal_row[1] if goal_row else 0
+    active_goal_name = goal_row['goal_name'] if goal_row else None
+    target_amount = goal_row['target_amount'] if goal_row else 0
     remaining_to_goal = max(0, target_amount - total_savings) if target_amount > 0 else 0
     
     conn.close()
@@ -685,8 +685,8 @@ def savings_growth():
     
     conn.close()
     
-    dates = [row[0] for row in results]
-    daily_amounts = [row[1] for row in results]
+    dates = [row['date'] for row in results]
+    daily_amounts = [row['daily_total'] for row in results]
     
     cumulative = []
     running_total = 0
@@ -714,8 +714,8 @@ def savings_source_distribution():
     
     conn.close()
     
-    sources = [row[0] for row in results]
-    amounts = [round(row[1], 2) for row in results]
+    sources = [row['source'] for row in results]
+    amounts = [round(row['total'], 2) for row in results]
     
     return jsonify({
         'sources': sources,
@@ -784,12 +784,12 @@ def savings_goals():
     conn.close()
     
     result = [{
-        'id': goal[0],
-        'goal_name': goal[2],
-        'target_amount': goal[3],
-        'target_date': goal[4],
+        'id': goal['id'],
+        'goal_name': goal['goal_name'],
+        'target_amount': goal['target_amount'],
+        'target_date': goal['target_date'],
         'current_amount': round(total_savings, 2),
-        'progress_percent': round(min(100, (total_savings / goal[3] * 100) if goal[3] > 0 else 0), 2)
+        'progress_percent': round(min(100, (total_savings / goal['target_amount'] * 100) if goal['target_amount'] > 0 else 0), 2)
     } for goal in goals]
     
     return jsonify(result)

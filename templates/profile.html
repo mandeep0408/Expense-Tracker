@@ -35,7 +35,7 @@
             </nav>
         </header>
 
-        <!-- Profile Header -->
+        <!-- Profile Header with Animation -->
         <section class="profile-header">
             <div class="profile-avatar">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -49,10 +49,10 @@
             </div>
         </section>
 
-        <!-- Profile Form -->
+        <!-- Profile Form with Animations -->
         <section class="profile-content">
             <form id="profileForm" class="profile-form">
-                <div class="profile-form-section">
+                <div class="profile-form-section fade-in-up">
                     <div class="section-header">
                         <div class="section-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -68,7 +68,7 @@
                     </div>
                 </div>
 
-                <div class="profile-form-section">
+                <div class="profile-form-section fade-in-up" style="animation-delay: 0.1s;">
                     <div class="section-header">
                         <div class="section-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -86,7 +86,7 @@
                     </div>
                 </div>
 
-                <div class="profile-form-section">
+                <div class="profile-form-section fade-in-up" style="animation-delay: 0.2s;">
                     <div class="section-header">
                         <div class="section-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -120,8 +120,8 @@
                     </div>
                 </div>
                 
-                <div class="profile-form-actions">
-                    <button type="submit" class="btn-primary">
+                <div class="profile-form-actions fade-in-up" style="animation-delay: 0.3s;">
+                    <button type="submit" class="btn-primary btn-save-profile">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 8px;">
                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
                             <polyline points="17 21 17 13 7 13 7 21"/>
@@ -142,8 +142,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             const userName = '{{ session.get("user_name", "User") }}';
             const userElement = document.getElementById('user-name');
+            const profileDisplayName = document.getElementById('profile-display-name');
             if (userElement) {
                 userElement.textContent = userName;
+            }
+            if (profileDisplayName) {
+                profileDisplayName.textContent = userName;
             }
         });
 

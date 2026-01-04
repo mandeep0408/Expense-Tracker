@@ -92,86 +92,6 @@ header h1 {
     font-weight: 600;
     color: var(--text-primary);
     letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.logo:hover {
-    transform: translateY(-2px);
-}
-
-.logo:hover .logo-icon {
-    transform: rotate(5deg) scale(1.05);
-    box-shadow: 0 4px 12px rgba(58, 91, 160, 0.3);
-}
-
-.logo-icon {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-teal) 100%);
-    border-radius: var(--radius-md);
-    flex-shrink: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(58, 91, 160, 0.2);
-    position: relative;
-    overflow: hidden;
-}
-
-.logo-icon::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transform: rotate(45deg);
-    transition: all 0.5s ease;
-    opacity: 0;
-}
-
-.logo:hover .logo-icon::before {
-    animation: shine 0.6s ease;
-}
-
-@keyframes shine {
-    0% {
-        left: -50%;
-        opacity: 0;
-    }
-    50% {
-        opacity: 1;
-    }
-    100% {
-        left: 150%;
-        opacity: 0;
-    }
-}
-
-.logo-icon svg {
-    width: 24px;
-    height: 24px;
-    transition: transform 0.3s ease;
-    position: relative;
-    z-index: 1;
-}
-
-.logo:hover .logo-icon svg {
-    transform: scale(1.1);
 }
 
 nav {
@@ -812,7 +732,7 @@ nav a.active {
     border-bottom: none;
 }
 
-/* Profile Page Styles */
+/* Profile Page Styles with Animations */
 .profile-header {
     background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-teal) 100%);
     padding: var(--spacing-xl) var(--spacing-lg);
@@ -822,6 +742,7 @@ nav a.active {
     color: white;
     position: relative;
     overflow: hidden;
+    animation: fadeIn 0.6s ease;
 }
 
 .profile-header::before {
@@ -834,6 +755,7 @@ nav a.active {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     pointer-events: none;
+    animation: float 15s ease-in-out infinite;
 }
 
 .profile-header::after {
@@ -846,6 +768,27 @@ nav a.active {
     background: rgba(255, 255, 255, 0.08);
     border-radius: 50%;
     pointer-events: none;
+    animation: float 20s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(-20px, -20px) scale(1.1);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .profile-avatar {
@@ -861,18 +804,53 @@ nav a.active {
     position: relative;
     z-index: 1;
     backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    animation: scaleIn 0.6s ease 0.2s both;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.profile-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
 }
 
 .profile-avatar svg {
     width: 40px;
     height: 40px;
     stroke: white;
+    transition: transform 0.3s ease;
+}
+
+.profile-avatar:hover svg {
+    transform: rotate(10deg);
 }
 
 .profile-header-content {
     flex: 1;
     position: relative;
     z-index: 1;
+    animation: slideInLeft 0.6s ease 0.3s both;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .profile-header-content h2 {
@@ -891,6 +869,7 @@ nav a.active {
 
 .profile-content {
     padding: var(--spacing-lg);
+    animation: fadeIn 0.8s ease 0.4s both;
 }
 
 .profile-form {
@@ -905,13 +884,45 @@ nav a.active {
     padding: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
     box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-form-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(58, 91, 160, 0.05), transparent);
+    transition: left 0.5s ease;
+}
+
+.profile-form-section:hover::before {
+    left: 100%;
 }
 
 .profile-form-section:hover {
     box-shadow: var(--shadow-md);
-    border-color: rgba(58, 91, 160, 0.2);
-    transform: translateY(-2px);
+    border-color: rgba(58, 91, 160, 0.3);
+    transform: translateY(-4px);
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .section-header {
@@ -921,6 +932,22 @@ nav a.active {
     margin-bottom: var(--spacing-md);
     padding-bottom: var(--spacing-md);
     border-bottom: 2px solid var(--border-subtle);
+    position: relative;
+}
+
+.section-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--accent-teal));
+    transition: width 0.4s ease;
+}
+
+.profile-form-section:hover .section-header::after {
+    width: 100px;
 }
 
 .section-icon {
@@ -932,12 +959,24 @@ nav a.active {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.profile-form-section:hover .section-icon {
+    background: linear-gradient(135deg, rgba(58, 91, 160, 0.2) 0%, rgba(47, 143, 157, 0.2) 100%);
+    transform: scale(1.1) rotate(5deg);
 }
 
 .section-icon svg {
     width: 20px;
     height: 20px;
     stroke: var(--primary-blue);
+    transition: all 0.3s ease;
+}
+
+.profile-form-section:hover .section-icon svg {
+    stroke: var(--accent-teal);
+    transform: scale(1.1);
 }
 
 .section-header h3 {
@@ -950,6 +989,7 @@ nav a.active {
 
 .profile-form-section .form-group {
     margin-bottom: var(--spacing-md);
+    position: relative;
 }
 
 .profile-form-section .form-group:last-child {
@@ -963,6 +1003,22 @@ nav a.active {
     color: var(--text-primary);
     margin-bottom: var(--spacing-xs);
     font-size: 0.9375rem;
+    transition: color 0.3s ease;
+}
+
+.profile-form-section .form-group:focus-within label {
+    color: var(--primary-blue);
+}
+
+.profile-form-section textarea,
+.profile-form-section input {
+    transition: all 0.3s ease;
+}
+
+.profile-form-section textarea:focus,
+.profile-form-section input:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(58, 91, 160, 0.15);
 }
 
 .profile-form-actions {
@@ -972,12 +1028,58 @@ nav a.active {
     margin-top: var(--spacing-lg);
 }
 
-.profile-form-actions .btn-primary {
+.btn-save-profile {
     padding: 16px 32px;
     font-size: 1.0625rem;
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-xs);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-save-profile::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-save-profile:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-save-profile:active {
+    transform: scale(0.98);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 }
 
 .budget-section h3 {
@@ -1376,16 +1478,6 @@ nav a.active {
     header h1 {
         font-size: 1.5rem;
     }
-    
-    .logo-icon {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .logo-icon svg {
-        width: 20px;
-        height: 20px;
-    }
 
     nav {
         width: 100%;
@@ -1580,16 +1672,6 @@ nav a.active {
 
     header h1 {
         font-size: 1.25rem;
-    }
-    
-    .logo-icon {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .logo-icon svg {
-        width: 18px;
-        height: 18px;
     }
 
     .summary-cards {

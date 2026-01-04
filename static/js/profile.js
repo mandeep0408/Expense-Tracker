@@ -4,17 +4,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadProfile();
     setupProfileForm();
-    updateProfileHeader();
 });
-
-// Update profile header with user name
-function updateProfileHeader() {
-    const userName = document.getElementById('user-name')?.textContent || 'User';
-    const profileDisplayName = document.getElementById('profile-display-name');
-    if (profileDisplayName) {
-        profileDisplayName.textContent = userName;
-    }
-}
 
 // Load profile data
 async function loadProfile() {
@@ -45,6 +35,13 @@ function setupProfileForm() {
             vision_month: document.getElementById('profile-vision-month').value.trim()
         };
 
+        const submitButton = document.querySelector('.btn-save-profile');
+        const originalText = submitButton.innerHTML;
+        
+        // Loading state
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span>Saving...</span>';
+
         try {
             const response = await fetch('/api/profile', {
                 method: 'PUT',
@@ -58,12 +55,22 @@ function setupProfileForm() {
 
             if (result.success) {
                 showStatus('Profile updated successfully!', 'success');
+                // Success animation
+                submitButton.innerHTML = '<span>✓ Saved!</span>';
+                setTimeout(() => {
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }, 2000);
             } else {
                 showStatus('Error: ' + result.message, 'danger');
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
             }
         } catch (error) {
             console.error('Error saving profile:', error);
             showStatus('Error saving profile. Please try again.', 'danger');
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
         }
     });
 }
@@ -74,10 +81,14 @@ function showStatus(message, type) {
     statusDiv.textContent = message;
     statusDiv.className = 'budget-status ' + type;
     statusDiv.style.display = 'block';
+    statusDiv.style.animation = 'slideDown 0.3s ease';
 
     // Hide after 3 seconds
     setTimeout(() => {
-        statusDiv.style.display = 'none';
+        statusDiv.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => {
+            statusDiv.style.display = 'none';
+        }, 300);
     }, 3000);
 }
 

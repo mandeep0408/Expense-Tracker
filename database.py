@@ -104,6 +104,48 @@ def init_db():
         )
     ''')
     
+    # Migration: Add user_id column to savings table if it doesn't exist
+    try:
+        cursor.execute('SELECT user_id FROM savings LIMIT 1')
+    except sqlite3.OperationalError:
+        # Column doesn't exist, add it
+        try:
+            cursor.execute('ALTER TABLE savings ADD COLUMN user_id INTEGER')
+            # Set user_id to 1 for existing records (if any)
+            cursor.execute('UPDATE savings SET user_id = 1 WHERE user_id IS NULL')
+            conn.commit()
+        except sqlite3.OperationalError:
+            # If column already exists or other error, just continue
+            pass
+    
+    # Migration: Add user_id column to expenses table if it doesn't exist
+    try:
+        cursor.execute('SELECT user_id FROM expenses LIMIT 1')
+    except sqlite3.OperationalError:
+        # Column doesn't exist, add it
+        try:
+            cursor.execute('ALTER TABLE expenses ADD COLUMN user_id INTEGER')
+            # Set user_id to 1 for existing records (if any)
+            cursor.execute('UPDATE expenses SET user_id = 1 WHERE user_id IS NULL')
+            conn.commit()
+        except sqlite3.OperationalError:
+            # If column already exists or other error, just continue
+            pass
+    
+    # Migration: Add user_id column to savings_goals table if it doesn't exist
+    try:
+        cursor.execute('SELECT user_id FROM savings_goals LIMIT 1')
+    except sqlite3.OperationalError:
+        # Column doesn't exist, add it
+        try:
+            cursor.execute('ALTER TABLE savings_goals ADD COLUMN user_id INTEGER')
+            # Set user_id to 1 for existing records (if any)
+            cursor.execute('UPDATE savings_goals SET user_id = 1 WHERE user_id IS NULL')
+            conn.commit()
+        except sqlite3.OperationalError:
+            # If column already exists or other error, just continue
+            pass
+    
     conn.commit()
     conn.close()
 
